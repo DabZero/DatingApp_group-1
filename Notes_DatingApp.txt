@@ -1,0 +1,394 @@
+Day1:
+Angular
+app.module - bootstratp: [AppComponent] root of all components for this application
+		So all components roll up here
+	     imports: [other, modules] as globally usable throughout the application
+component  - Provides data for the view templates
+package.json - Manages dependencies + versions.  One level higher than src
+angular.json - The app configuration
+node_modules - 100's of listed dependencies listed out
+webpack -Compiles code to JS + injects JS into index.html (5 files)
+npm install bootstrap font-awesome
+src>styles.css @import "";
+project-spa>node_modules -List of all indiv loaded dependencies
+	angular snippets a-, ng-, fx-
+git remote add origin <gitub>		(+) -> "Message"-> ... push to
+
+
+.NetCore StartUp.cs (Program reads to start up the app)
+//ConfigureServices Called at runtime. Shell to add + hold services for DI.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddDbContext<AppContext>(o =>
+                o.UseSqlite(Configuration.GetConnectionString("defaultConnection"))); //appSettings.Dev.json
+              
+            services.AddCors();
+        }
+// Use this method to configure the HTTP request pipeline.
+        // This is middleware to interact w/ Req on its journey to deliver a Resp
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+CORS - Browser security feature that protects you from accessing data from an unknown origin. 
+API is a foreign site (localhost:5000) being Requested by angular (localhost:4200) 
+A coors policy is needed else an ERROR - "No Access-Control-Allow-Origin" header is coming from request
+		app.UseCors(req => req.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            	app.UseRouting();
+EntityFramework commands
+dotnet ef -h	dotnet ef migrations -h		dotnet ef migrations add <name>
+dotnet new -h	dotnet new webapi -n DatingApp.API
+dotnet --info display all your sdk's + info
+IActionResult= Http Resp   
+async Task= Doesn't block other Reqs in thread while waiting for returned resuts 
+  	Microsoft.EntityFrameworkCore  Microsoft.EntityFrameworkCore.Design  Microsoft.EntityFrameworkCore.Sqlite
+-----------------------------------------------------------
+Day 2:
+dotnet ef migrations add <name>		Add updates to existing migration file <update name>
+dotnet ef database update 		Update these changes to the DB
+Repository Pattern(I)-  If we change ORM, this will not change
+	Layer between EF and Controllers.  Repo exposes methods for (C) to use
+	(C) (Repo/ServiceImpl)(Repo/ServiceI) (EF Context)(Linq)->(DB)
+Methods can accept params or export values 
+Output params were used to initialize local variables inside another method
+	public void SomeMeth(int x, out int[] arr1, out string theOutput){}
+Task<User> = Just a User obj that is wrapped in a Task for Threading (use async await)
+_context = Middleware (Program<->DB) needs to track changes of entities
+	Else it connot be persisted(saved) state needs to be added to be saved
+	await _context.User.AddAsynch(userObject);	--Track changes to the domain.model
+	await _context.SaveChangesAsynch();	//Middleware to persist any tracked changes
+FirstOrDefaultAsynch(x => x.Id == id) returns null if not found
+	without the Asych part, an Exception would be thrown
+System.Security.Crytography - Objects you can create that can scramble inputs like passwords
+	using their method like computeHash.  These objects have this secret hash output 
+	but, also provide a key.  With this key you can replicate the hash given another crpyto object
+	The unique key is called a "Salt"  use this key to reverse-engineer.  Just create another 
+	cryto object and pass it the previous key.  Now It's output will be the same as your original cryto object
+-------------------------------------
+Day 3:
+Registering Services in the StartUp class --Make Services injectable throughout the App
+ 	services.AddSingleton<IService, TProvider> = Single instance created on 1st request.  
+	This instance is shared across across all new requests.  Problem when you have concurrent requests
+	AddTransient<IS, TP> = New instance created of repo for each http request
+	  Good for stateless services
+	AddScoped<> = Created only once per Req w/i the same scope.  
+	  Uses this single instance when other calls made as part of this Request.  
+	  The user's initial Request is grouped as a scope so, same instance is used during
+	  this user session. Good for an Auth Repo request because they are tied to a single session
+	AddScoped<IAuthRepo, ImplAuthRepo> = The (I) is injected into the (C) so, 
+	  the Controller code DOES NOT change.  Any changes happen in the impl class 
+Repository Pattern = (I) amd (Impl).  The Repo interface is injected into the (C)  so, that
+	The controllers logic does not need to change.  All changes about talking to the DB
+	happen in the Impl Repo.  Seperations of concerns so, (C) deals w/ Req/Resp
+	Repo deals w/ talking to DB and the Repo(I) is injected to the Controller.  
+	Register Repo as a service in the StartUp file so, it can be injected anywhere in the App.		
+Creating API Controllers
+	using Microsoft.AspNetCore.Mvc;  =Using MVC
+	[Route("api/[controller]")]    
+    	[ApiController]			Attribute based routing is enforced by using [ApiController]
+    					If removed we can use standard routing + auto-validates Req
+	public class ValuesController : ControllerBase = MVC (C) NO Views
+				      : Controller = 	 MVC (C) Allows Views	
+DTO's - Used to map Models into simpler objects	
+	DTOs are kept in a separate folder DTOs...ObjNameDto.cs
+	They have less info than the Object they mimic
+	I.E.  User Object has username, pHash, pSalt but no actual password so, a dto was created
+	  just to capture Username and Password.  The DTO object that has data still needs to 
+	  transfer that data into the actual obj.  
+	Generally received by the (C) as an object --Has the info we want from form/user
+	Converted to actual object in the (C) b/c we need real obj to save to the DB
+------------------
+Day 4:
+ServerSide Validation
+[ApiController]  Attribute of the (C) class does a lot of work for us
+  Infers [FromBody] in the (m) params.  Tells server this is obj vs. "Null"
+    Don't need to if(!ModelState.IsValid()) return BadRequest( ModelState )
+    Infers that a Post requires an object and sets the Model(obj) as an obj vs "Null"
+  DataAnnotations done on the model that is interacting with the Client
+  [MinLength(4, ErrorMessage = "Must be at least 4 characters")]
+  [StringLength(50, MinimumLength = 4, ErrorMessage = "Must be between 4-50 characters")]
+Token Authentication - How the client authenticates against the API.  With this auth
+  a user cannot make up their own token and send to the server.  Even if they have the username 
+  b/c the server has its own signature which verifies each token.  The server uses a secret key
+  to ensure that the token is valid...The token cannot be manipulated..Won't pass server check
+  JWT = Json Web Tokens (industry standard) https://jwt.io/
+	Self contained (Credentials, Claims to the app + more)
+	Doesn't go to DB to validate, calls the token itself
+	JWT is  text file 
+		1.Header("alg":encryted algo  "typ":"JWT")
+		2.Payload( info stored inside the token ) careful-Thses can be easily decoded
+		3.Secret(Used to Hash 1+2) stored on the server and never revealed to the client
+		  secret is included with JWT by client that the server can validate
+		  secret being passed needs to match ... else not a valid token
+	Returning token to users so, they can authorize themselves next time
+Identity Claims - (C) login)) We build the identity of the user by new Claim("type", "value")
+  	These are Claims that we make about them to identify who they are
+        var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString() ),
+                new Claim(ClaimTypes.Name, userFromRepo.UserName)
+            };
+Using Authentication Middleware - Once you have authorization set up in your (C)
+	Microsoft.IdentityModel.Tokens
+  	System.IdentityModel.Tokens.Jwt
+  	Microsoft.AspNetCore.Authentication.JwtBearer
+  The Startup.cs -ConfigureServices(CS services)
+  Authentication as a "service" set-up Startup.cs (Define what type of auth using)
+	 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(o =>
+                {...}
+http pipeline needs to be set up 
+Configure(IApplicationBuilder app
+  app.UseAuthentication(); --Can this Req(user) be authorized...Both are required
+  app.UseAuthorization();  --If so, what can he do
+    This must happen before 
+    UseEndpoint/UseMvc().  Because, we want to short circuit the http pipeline and protect
+    The (C) and its methods from unauthorized users 
+Use token to authorize users against the API and protect Servre resources. 
+ 	(C) [Authorize] = Each request requires authorization Token
+	    [AllowAnonymous] = method attribute = No authorization token required 
+Testing Authentication
+	Postman -> Request url -> Header(K,V) Authorization : Bearer "token string from successful login"
+1.Github Hiding the token key from being pushed to Github
+	Normal = Source control -> stage (+) -> "message" -> commit (enter) ...secrets are pushed
+	Hide a file(1) = .gitIgnore file ...add the file to omit from being pushed to Git
+		.vscode bin obj *.db appsettings.json
+	Remove from staging(2) = 	git rm appsettings.json --cached
+		Removes from staging.  Keeps chnages as local.  Does not go with push request
+2.Github Hiding the token key from being pushed to Github
+  Use this for DEV mode only.  Must use ENV Variables in prodution
+	(1)dotnet user-secrets init	Adds secrets GUID to <PropertyGroup>
+	<PropertyGroup>
+    		<TargetFramework>netcoreapp3.1</TargetFramework>
+    		<UserSecretsId>d316194c-5298-416c-84f9-1611dc803cc2</UserSecretsId>
+  	</PropertyGroup>	
+					("Section:Key" "value")
+	(2)dotnet user-secrets set "AppSettings:Token" "the token value later to byte[] in Login controller"
+		This (k,v) from appsettings.json now exists as a secret in local computer
+		dotnet user-secrets list	retreives token value from local
+	(3)Remove "AppSettings": { "Token": "..."} from appsettings.json
+Summary:
+	Passwords in Db are stored as password hash + salts(key)... not visible text
+	  Even if two passwords are the same they will have a different Hash b/c
+	  a new security crypto object (unqiue key) is created making the key + hash
+	  specific to that object each time a user registers (C-Register->authRepo->register->createPasswordhash)
+	JWTokens can be passed from client to the server to authenticate the user.
+	    Since JWT are signed with a secure key, no DB call to server to check if authenticated
+	    Because, they are sending request with the Token we have already provided 
+	    ensuring authentication for a given period of time
+------------------
+Day 5:	 
+Creating the Nav & Login form   
+Turn html form into an angular form gives you:
+	change tracking, two-way binding, validation and error handling
+		Template reference = variable to assign "ngForm" directive 
+		    #..="ngForm"
+		Turns on Angular for this <form> by assigning var + directive
+	<form #loginForm="ngForm"  (ngSubmit)="login()">				
+		Must import: FormsModule in app.module.ts
+(click) vs (ngSubmit)="..."
+	Click is on the element.  NgSubmit is written on the form tag
+<input name="password" Attribute is used by Angular to assign and register the input
+<input name="password" required	   placeholder="put passord here"  -required field + placeholder
+<imput name="password" [(ngModel)]="model.password" -2-way binding to model:any={} in component
+
+Angular validation, form-states / field-states used for tracking
+	Add reference var to access outside of the tag		#password="ngModel"
+	Remove this field level reference variable.  It is only used for testing
+	Allows for 2-way binding so, you can see pas field states
+
+<div>	Form Valid: 	{{ #loginForm.valid }}  	Are all required fields populated entire form
+	Form Values 	{{ #loginForm.value | json}}	Values populate as you type
+	Password Valid	{{ password.valid  }}		.valid = required field is populated
+	Password Value	{{ password.value  }}		2-way binding value will be printed
+</div>
+
+<button [disabled]="!loginForm.valid"  	   Disable this button if the validation state of
+					   the form is invalid.  Else, enable the button
+					   so, the button can be clicked and data passed
+------------------
+Day 6:  
+Creating services
+	1.  Make a folder "_services" to hold all of your services
+	2.  ng g service auth 	-> component: auth.service.ts 	export class: AuthService 
+	Service = Centralizing the API req/resp to a single location vs. duplicating
+		  code in every class
+		1.  Use services to create methods that communicate with API as a stream
+		    send http methods Req-> get back a stream as the Resp.  In AuthService, we are 
+		    expecting a token (k,v) "Token" : "Token string" has:
+			a.  Header- What kind of security, what is it (k)
+			b.  Payload - Body that has some info about response
+			    How long is this token valid for start/end + some passed data
+			c.  Signature - Encryted string that comes from server and only that
+					string can be sent back.  No other combo will work
+					This Verifies each token and allows authenticated communication
+					as long as the exact security string comes back with the user
+					log-in credentials
+		2.  Components are auto-injectable but Services are not
+		    @Injectable decorator = You can inject this instance to another class as DI
+		    providedIn: "root" = Which module is providing this service?  The root module is
+		    Add Service as a provider - manually
+		    app.module.ts	providers:[AuthService] is autoregistered at the root level module 
+
+Observables	import { Observable } from 'rxjs';	working with REST API's
+							
+	In order to do something with a Resp (from server).  You need to use rxjs operators
+	You pass these operators(filter/map/reduce) through a pipe method so, you can chain 
+	rxjs operators to the request.	import { map } from "rxjs/operators";
+	The .pipe returns Observable<void> ...remember, Observables are lazy so, they don't
+	  return anything.  You must subscribe to them to elicit the data
+
+	return this.http.post("url", obj) 
+		= use return + http.(req type) method to send Req to API  
+		= interprets the body as JSON and returns it as an Observable in JSON
+		.pipe() 		= transform the response to your request as Observable
+		.map( (Resp)=>{})	= transform incoming values on-at-a-time
+		  const user:any = response;	= cal response user since we are receiving
+						  JSON token which represents the auth of
+						  our user "token" : "security token string"	
+		  if (user) { localStorage.setItem("token" : user.token)}
+						= store the response as (k,v) in the browser
+						  since Resp comes back as JSON, it is serialized
+						  to a string. Asigning "ObjKeyName", calling Obj.Key = value 
+Localstorage = store (k,v) in a web browser.  data is persisted so, close browser | refresh page 
+data still there (persisted).  (-) You can only store strings, store as json  
+
+rxjs Operators						import { map } from "rxjs/operators";
+	const filterOutWithEvens = filter(x => x % 2)
+	const doubleByValue = x => map(value => value * x);
+	const sumValue = reduce((acc, next) => acc + next, 0);
+	const source$ = Observable.range(0, 10)
+
+	source$.pipe(
+  	  filterOutWithEvens, 
+  	  doubleByValue(2), 
+  	  sumValue)
+  	  .subscribe(console.log); // 50
+------------------
+Day 7: 
+Getting data from the browser
+	Console: Message you send to the log
+	Network: Where you see your Req/resp info .. Click on indiv. req to see req/resp info
+	Application:  Storage- Local/Session/Cookies, Cache-
+Conditional method to use in *ngIf="loggedin()"
+	loggedin() : boolean{ const token = localStorage.getItem("key") } 
+	return !!token;		---T/F item present or not
+		Same as below
+	if (token) return true;  Else return false;
+					template reference
+Conditionally render the Nav Bar using <form #loginForm="ngForm" *ngIf="!loggedIn()" 
+	put conditional on element to show/hide
+	  method returns boolean ...method constantly running/listening.  So, when/if  
+	  conditions change, method value changes(T/F) -> ngIf shows/hides this element
+Alternate pattern for toggling
+	1.  make a variable in the component 	regMode: boolean = false;
+	2.  set this var as an *ngIf="regMode"  vs.  *ngIf="!regMode" on 2 elements to swap
+	3.  set an event (click)="toggle()"
+	4.  In component set toggle() {this.regMode = !this.regMode}
+	5.  This toggles both listening ngIf's so, only 1 is present
+		a.  The one you want on 1st set to !regMode = (!false)
+		b.  When toggled this will go away and the other will appear
+------------------
+Day 8:
+Global exception handling  
+	If not in properties -> launchSetting.json  "Development" -or- switch to "Production"
+	  you want to use global exceptoin handling to limit indiv.  Try/catch blocks in ea class		
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())			Exception Handler adds middleware to the
+            {						 pipeline.  That catches the exceptions 
+                app.UseDeveloperExceptionPage();	 logs it-> re-executes the request in an 
+            }						 alternate pipeline...so, no unhandled, this
+            else					 is handling ...I.E equivenant of global try/catch
+            {
+                app.UseDeveloperExceptionPage();	This needs to be configured and returns IApplicationBuilder
+            }
+
+------------------
+Day 8:
+Wrapping 3rd party libraries as an Angular service 
+	Alertifyjs.com - Notifications (sucess/failures) from browser
+		npm install alertifyjs	DatingApp > spa
+		spa > src > styles 	@import "../node_modules/alertifyjs/build/css/alertify.min.css"
+					@import "../node_modules/alertifyjs/build/css/themes/bootstrap.min.css";
+		spa> src > app . services			ng g service alterify
+			import all alertify methods/libraries	import * as alertify from 'alertifyjs'
+			spa> src > new file     typings.d.ts	declare module 'alertifyjs'
+			spa> tsconfig.json
+	alertify.service.ts
+		Add confirm/success/error methods
+		Import AlertifyService into constructor
+	Angular JWT - Token helpers
+	NGX Bootstrap - Kind of like JQuery for Angular
+	Bootswatch - Change theme of design (through Bootstrap)
+
+login(){
+	this.service.login(this.model)
+		.subscribe(
+			next=>{this.alertify.success("")},
+			err =>{this.alertify.error(err)}
+	);
+}
+
+
+
+
+
+
+------------------
+Day 6: 
+Angular @Input @Output Property binding
+This is how you pass data from one componet to another so that its avaialble
+for the other components template
+
+1.  Transfer data from p->c receiving @input within the c component 
+	(p)
+	P_input:string;
+	<input type="text"   [(ngModel)]="P_input">
+					    v
+ 	        <app-child [parentTxBx] ="P_input"> </app-child>
+	(C)
+	@Input("parentTxBx")parentTxBxVal: string;
+	<p>Value of Parent TextBox:  {{parentTxBxVal}}
+
+2.  Transfer data from p->c receiving @input within the c component 
+	(p)
+			pClick: Subject<void> =new Subject<void>();
+	OnPclick(){this.pClick.next();
+			   v
+	<button (click)="OnPclick()">Parent Click</button>	
+			   v
+    <app-child [pBclick]="pClick"  >
+	(c)
+		   v
+  	@Input("pBclick") parentClick:Subject<void>;
+	clickCount:number=0;
+				//On-click Subject observable is fed a new Subject
+				//Increment is called on clickCount
+	ngOnInit(): void {
+    		this.parentClick.subscribe(()=>
+      		this.incrementValue() );
+  	}
+  	incrementValue(): void{
+    		this.clickCount= this.clickCount+1;
+  	}
+	<div> Parent click count : {{parentClick}} </div>
+
+3.  Transfer data from c->p receiving @Output within the p component 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
