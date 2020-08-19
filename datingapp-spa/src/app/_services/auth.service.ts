@@ -20,9 +20,9 @@ export class AuthService {
       .pipe(
         map((response: any) => {                        //incomming req is a bearer (token: "token string")
           const user = response;                        //user = this (k,V)
-          if (user) {                                   //set token in same format onthe browser local storage
+          if (user) {                                   //set token in same format on the browser local storage
             localStorage.setItem("token", user.token);
-            this.decodedToken = this.jwtHelper.decodeToken(user.token);     //decode token string and hold as var
+            this.decodedToken = this.jwtHelper.decodeToken(user.token);     //decode (v) token string and hold as var
             console.log(this.decodedToken);                                 //to see the fields of jwt decode method in browser
             /* console.log("user: " + this.decodedToken.unique_name);    --> fields comes from authController ...claims + tokenDescriptor
              this.decodedToken.exp , this.decodedToken.iat, this.decodedToken.nbf, this.decodedToken.nameid*/
