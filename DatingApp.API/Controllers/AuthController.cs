@@ -80,7 +80,7 @@ namespace DatingApp.API.Controllers
                 new Claim(ClaimTypes.Name, userFromRepo.UserName)
             };
 
-            //We define this key in our AppSettings but, a key must be in bytes[]
+            //We define this key in our appSettings.json but, a key must be in bytes[]
             //The key is required for the Server to sign the Token
             //
             var key = new SymmetricSecurityKey(Encoding.UTF8
