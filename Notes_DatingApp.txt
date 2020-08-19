@@ -315,20 +315,30 @@ Wrapping 3rd party libraries as an Angular service
 			spa> src > new file     typings.d.ts	declare module 'alertifyjs'
 			spa> tsconfig.json
 	alertify.service.ts
-		Add confirm/success/error methods
+		Add confirm/success/error methods in this .ts then use them in other components
 		Import AlertifyService into constructor
-	Angular JWT - Token helpers
-	NGX Bootstrap - Kind of like JQuery for Angular
+			login(){
+				this.service.login(this.model)
+				.subscribe(
+					next=>{this.alertify.success("")},
+					err =>{this.alertify.error(err)}
+				);
+				}
+Angular JWT - Token helpers - 3rd party library to help manage tokens	https://github.com/auth0/angular2-jwt
+	npm install @auth0/angular-jwt	
+	import {JwtHelperService} from "@auth0/angular-jwt"
+	--Building this in service, this way you can check JWT status by injection vs in each component
+	jwtHelper = new JwtHelperService();
+	loggedin(){	//comming in as a service 
+
+    		const token = localStorage.getItem("token");
+    		return !this.jwtHelper.isTokenExpired(token);
+	loggedIn(): boolean {	--consumed by a component
+
+    		return this.authService.loggedin();
+
+NGX Bootstrap - Kind of like JQuery for Angular
 	Bootswatch - Change theme of design (through Bootstrap)
-
-login(){
-	this.service.login(this.model)
-		.subscribe(
-			next=>{this.alertify.success("")},
-			err =>{this.alertify.error(err)}
-	);
-}
-
 
 
 
@@ -374,9 +384,6 @@ for the other components template
 	<div> Parent click count : {{parentClick}} </div>
 
 3.  Transfer data from c->p receiving @Output within the p component 
-
-
-
 
 
 

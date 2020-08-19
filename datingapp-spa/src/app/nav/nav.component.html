@@ -19,7 +19,7 @@
     <!--Drop Down menu will display if the User is logged in-->
     <div class="dropdown" *ngIf="loggedIn()">
         <a class="dropdown-toggle text-light">
-            Welcome User
+            Welcome {{authService.decodedToken?.unique_name | titlecase}}
         </a>
 
         <div class="dropdown-menu">
