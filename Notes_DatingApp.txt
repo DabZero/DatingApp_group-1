@@ -290,8 +290,8 @@ Alternate pattern for toggling
 ------------------
 Day 8:
 Global exception handling  
-	If not in properties -> launchSetting.json  "Development" -or- switch to "Production"
-	  you want to use global exceptoin handling to limit indiv.  Try/catch blocks in ea class		
+	properties -> launchSetting.json  "Development" -or- switch to "Production"
+	  you want to use global exception handling to limit try/catch blocks in ea class		
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())			Exception Handler adds middleware to the
@@ -300,17 +300,21 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             }						 alternate pipeline...so, no unhandled, this
             else					 is handling ...I.E equivenant of global try/catch
             {
-                app.UseDeveloperExceptionPage();	This needs to be configured and returns IApplicationBuilder
-            }
-
+                app.UseExceptionHandler(builder =>	This needs to be configured and returns IApplicationBuilder
+            }						Set all exceptions as 500, output our custom Extensions class method "AddApplicationError"
+							passes our error to the response.  Return s status 500 w/ message in the headers
 ------------------
 Day 8:
-Wrapping 3rd party libraries as an Angular service 
+Wrapping 3rd party libraries as an Angular service.  Get a 3rd party app for cool alerts and turn it into an 
+Angular service.  Do install, then make a service (so components can inject to use).  make teh methods of 
+this service (success, fail, warn).  based on the imported libraries, when used, altertify makes cool pop ups
+for succes + message you pass.  You use these DI this service into a component, then calling their methods
+and passing in the custom message
 	Alertifyjs.com - Notifications (sucess/failures) from browser
 		npm install alertifyjs	DatingApp > spa
 		spa > src > styles 	@import "../node_modules/alertifyjs/build/css/alertify.min.css"
 					@import "../node_modules/alertifyjs/build/css/themes/bootstrap.min.css";
-		spa> src > app . services			ng g service alterify
+		spa> src > app > services			ng g service alterify
 			import all alertify methods/libraries	import * as alertify from 'alertifyjs'
 			spa> src > new file     typings.d.ts	declare module 'alertifyjs'
 			spa> tsconfig.json
@@ -337,14 +341,48 @@ Angular JWT - Token helpers - 3rd party library to help manage tokens	https://gi
 
     		return this.authService.loggedin();
 
-NGX Bootstrap - Kind of like JQuery for Angular
-	Bootswatch - Change theme of design (through Bootstrap)
+NGX Bootstrap - 3rd party library to integrate bootstrap with Angular.  Best practice is not to use jQuery but,
+pure Angular and integrate Angular based libraries.		https://valor-software.com/ngx-bootstrap/#/dropdowns
+-basically after installed, just add some NGX specific key words to elements to use features.  
+	install at the spa level	ng add ngx-bootstrap
+	add NGX module to module root	import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+					import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+	register module in imports	import: [BrowserAnimationsModule,
+    						 BsDropdownModule.forRoot()]	
+	<div dropdown>  		Keyword needed on surounding elem to indicate this is a dropdown
+	  <a dropdowntoggle>Welcome	Kw when using <a>, what you click on to display dropdown options (on-off)
+	  <div *dropdownMenu>		The inner items are <a> link as drop down options.  
+		<a>item1</>	  	This Kw just groups these items that will be shown as drop-down options
+		<a>item2</>	  	* this is a structural directive that changes the DOM directly	
+
+-minor fixes in CSS of the nav bar we added a pointer when using the dropdown, dropdowntoggle, the items of teh drop down
+	.dropdown-toggle, .dropdown-item{  cursor: pointer;  }
+-Hid the NavBar menu items to only show if a user is logged in.  Targeted <ul> holding <li> each menu item
+	<ul class="navbar-nav mr-auto" *ngIf="loggedIn()">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Matches </a>
+-Drop down items were too close to the "dropdowntoggle" which shows >Welcome Username<
+The "dropdownMenu" sourounding each item needed some margin-top so, they werent mashed together...to effect all grouped items
+	<div class="dropdown-menu mt-3" *dropdownMenu>
 
 
+Bootswatch - Change theme of design free (through Bootstrap)		https://bootswatch.com/help/
+	npm install bootswatch		install Bootswatch at the spa level 
+	spa>node_modules		These are the project dependencies-> will show "bootswatch"
+	bootswatch>dist			This holds all the avaialble themes, so you know path to point to
+	spa>app>src>styles.css		@import "../node_modules/bootswatch/dist/flatly/bootstrap.min.css";
 
-
+from bootswatch, dropdown to theme used "flatly". <> means check out the code.  Only one change was made 
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary"> changed to bg-primary to match theme better
 
 ------------------
+Day 9:
+
+
+
+
+
+--------------
 Day 6: 
 Angular @Input @Output Property binding
 This is how you pass data from one componet to another so that its avaialble
