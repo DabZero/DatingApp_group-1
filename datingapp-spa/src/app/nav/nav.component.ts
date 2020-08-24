@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { stringify } from '@angular/compiler/src/util';
 import { AlertifyService } from "../_services/alertify.service";
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -12,7 +13,8 @@ import { AlertifyService } from "../_services/alertify.service";
 export class NavComponent implements OnInit {
   model: any = {};
 
-  constructor(public authService: AuthService, private alertify: AlertifyService) { }
+  constructor(public authService: AuthService, private alertify: AlertifyService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -20,8 +22,12 @@ export class NavComponent implements OnInit {
   login(): void {
     this.authService.login(this.model)
       .subscribe(
-        next => { this.alertify.success("Logged in successfully"); },
-        error => { this.alertify.error(error); }
+        next => {
+          this.alertify.success("Logged in successfully");
+          //            this.router.navigate(['/members'])    next=Req is sucessful + Resp has data from api
+        },                                                  //route to this url after all successful req/resp
+        error => { this.alertify.error(error); },
+        () => { this.router.navigate(['/members']); }      //alternate use complete():void after sucess req/resp
       );
   }
   // If user is logged in, the token will exist in local storage + show welcome message
@@ -39,5 +45,6 @@ export class NavComponent implements OnInit {
 
     localStorage.removeItem("token");
     this.alertify.message("logged out");
+    this.router.navigate(['']);
   }
 }

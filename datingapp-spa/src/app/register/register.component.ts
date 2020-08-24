@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
 import { AlertifyService } from '../_services/alertify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,8 @@ import { AlertifyService } from '../_services/alertify.service';
 export class RegisterComponent implements OnInit {
   model: any = {};
 
-  constructor(private authService: AuthService, private alertify: AlertifyService) { }
+  constructor(private authService: AuthService, private alertify: AlertifyService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -25,6 +27,7 @@ export class RegisterComponent implements OnInit {
 
   cancel() {
     console.log("Remove user/password from input fields");
+
   }
 
 }
