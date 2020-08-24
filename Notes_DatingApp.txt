@@ -378,12 +378,154 @@ from bootswatch, dropdown to theme used "flatly". <> means check out the code.  
 
 ------------------
 Day 9:
+Set-up up Angular routing.  
+We need somewhere to route when people/click on links in the navBar and go to the appropriate
+page (Angular component).  Within the app-component level create components to ...   
+	ng g c member-list	Display a list of other users with details ... as cards
+	ng g c list		Keeps track of users that, this user likes -or- have liked this user 
+	ng g c messages
+		Components should be auto-registered as declarations:[components that roll up to app root] in app.module
+	echo > routes.ts 	make a file that contains routes for our application
+	src>app		touch routes.ts		new file in bash (non-windows)
+			import { Routes } from '@angular/router';
 
+How to set route paths?
+After you have created routes.ts  Define Routes=[] as an array of objects{}. make paths -> components 
+Order is important.  ** if no path round redirect to the home screen  
+				export const appRoutes: Routes = [
+    					{which path: "", will match to our angular component: compName},
+					{ path: "list", component: ListComponent },
+    					{ path: "**", redirectTo: "home", pathMatch: "full" }
+				]
+Register your routing the the app
+Enable routing capabilities for the Angular app...
+Register the Routing module at the app root level "app.module"
+app.module allows the entire app to use any registered modules + auto-registers components to roll up to this app-root
 
+import {RouterModule} from "@angular/router";	import { appRoutes } from "./routes";
 
-
-
+	import: [					.forRoot() takes 1-2 args and configures
+	RouterModule.forRoot(appRoutes)]  		this module with any routes we provide.	
+	
+ 
+In this case we have configured using appRoutes from our export of routes.ts
 --------------
+Day 10:
+How to use [routerLink] in html templates for <a> navigation
+
+Setting up links(we just made) in the Nav Component
+This tells Nav bar where to direct people to when they click on <a> by changing the URL
+--Adding [routerLink]  to the nav.html ...a-routerlink(short-cut)
+
+	href="#"  vs.  [routerLink]="['/routePath']" routerLinkActive="router-link-active"
+
+<li class="nav-item" routerLinkActive="active">				light-up on click/hover
+	<a class="nav-link" [routerLink]="['/lists']">Lists</a>		changes url tree to host/lists
+</li>									links rourter to this path...click <a>
+
+--Converting the app.component structure -> RouterOutlet structure
+<app-nav></app-nav>
+<router-outlet></router-outlet> 	vs	<app-home></app-home>   selector
+	when the route is host/home...The home component still exists and has the register selector as a child
+	but, by putting the outlet here.  The <a>routes are inside of the nav.comp.html  Therefore only NAV comp 
+	is shown but, ** in routing defaults to "home" host:4200/home.  Home view is auto displayed with 
+	register & learMore buttons.  Click<a> from nav bar is how you access to the other components. 
+	Which are all (on/off) based on the login -or- not loggedin 
+
+--Redirecting user on login-> "members" to display a list of members  vs.  logout-> home
+	Use angular Routing as an injectable service to put into .ts components when methods are called 	
+					
+							import {Router} from "@angular/router";
+							constructor(private router: Router){}
+
+	app-nav.html has on-click <a>routing to url paths & login()/logout() methods we want to effect
+	Use these methods to effect routing when methods are being called
+	1. Effect routing from an observable method
+	   We have injected Routing + the login() is subscribed to the authService api call
+		next 	= Req is successful, resp has data back from api
+		error 	= data stream has a passed error that we are grabbing/passing and returning to browser via alertify
+		complete= ()=> {after all next's are called, do this, returns void}
+
+           Observable<void>.subscribe( next?: (val:void)=>void, error?: (error:any)=> error, complete?: ()=> void )
+ 
+			login(): void {
+			this.authService.login(this.model)
+      				.subscribe(
+        				next => {this.alertify.success("Logged in successfully");
+					error => { this.alertify.error(error); },
+					() => { this.router.navigate(['/members']); }
+				);
+
+	2. Effect routing from regular method
+			logout(): void {
+
+    					localStorage.removeItem("token");
+    					this.alertify.message("logged out");
+    					this.router.navigate(['/home']);
+  					}
+		*Notice that the router.navigate(['url-path']) is void like all statements in this method
+		The routing is being updated and nothing is being returned
+
+in methods 	= router.navigate([''])
+in html 	= [routerLink]="['/lists']"
+
+--Using Routeguards to protect routes from unauthorized users.  implements CanActivate ... can this route 
+	be activated (t/f)
+	
+	src>app		mdir _guards			Make a dir to hold auth guards for routes
+	cd _guards	ng g guard auth	--skipTests	Make guard with no tests(spects.ts)
+							which interfaces to use...space to select
+							select "CanActivate" return
+	
+auth.guard.ts is kinda like a separate component.  I stripped off most return options since this is just a bool to 
+see if, a user is logged in or not.  If not logginIn, they can only access the home page. Now you can DI
+the guard to use this protection.
+
+	export class AuthGuard implements CanActivate {
+
+  	constructor(private authService: AuthService,
+    		private alertify: AlertifyService, private router: Router) { }
+
+	canActivate(): boolean {
+
+    		if (this.authService.loggedin())    //Req of canActivate true = user can proceed
+      			return true;
+
+    		else {
+      			this.alertify.error("Requires valid login to access this area");
+    		}
+  	}
+
+Using a guard in the appRoute configuration class routes.ts to effect a single route	
+routes.ts	
+
+	import { AuthGuard } from "./_guards/auth.guard";				can only acces this route
+											if the guard is true.  Pass the guard
+	 { path: "members", component: MemberListComponent, canActivate: [AuthGuard] }		
+
+*canActivate:  []
+Is a type that can hold an array of guards  
+An array of dependency-injection tokens used to look up CanActivate() handlers, in order 
+to determine if the current user is allowed to activate the component. By default, any user can activate.
+
+
+Using guards to protect multiple routes
+	create a single route in routes.ts (serarate route object{} in array of Routes=[])
+	to guard many routes by passing route/path in as children ... within routes.ts
+
+	export const appRoutes: Routes = [
+
+		{ path: "", 				//localhost:4200 +blank path to add onto this 
+		  runGuardsAndResolvers: "always",	//always run guards for these children
+        	  canActivate: [AuthGuard], 		//This single guard (one of many)
+        	  children: [
+            		{ path: "members", component: MemberListComponent },
+            		{ path: "messages", component: MessagesComponent },
+            		{ path: "lists", component: ListComponent }
+        ]
+		},
+
+-------------
 Day 6: 
 Angular @Input @Output Property binding
 This is how you pass data from one componet to another so that its avaialble

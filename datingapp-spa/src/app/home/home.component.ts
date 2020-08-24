@@ -16,7 +16,9 @@ export class HomeComponent implements OnInit {
 
   registerToggle() {
     this.registerMode = !this.registerMode;
-    console.log("Register Mode has been toggled by the \n registerToggle() method hid Home Componenet Div \n show register nested Div");
+    console.log("Register Mode has been toggled by the \n" +
+      "registerToggle() method hides Home Componenet Div \n" +
+      "and shows register nested Div");
   }
 
 }
