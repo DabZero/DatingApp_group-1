@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
+using DatingApp.API.Models;
 
-namespace DatingApp.API.Models
+namespace DatingApp.API.DTOs
 {
+
     /// <summary>
-    /// Dating app Users
+    /// DTO details we want returned to the API
+    /// We do not want the complete details of the User Object (salt + hash)
     /// </summary>
-    public class User
+    public class UserForDetailedDto
     {
         public int Id { get; set; }
         public string UserName { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
 
         public string Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public int Age { get; set; }
         public string KnownAs { get; set; }
         public DateTime Created { get; set; }
         public DateTime LastActive { get; set; }
@@ -25,9 +26,8 @@ namespace DatingApp.API.Models
         public string City { get; set; }
         public string Country { get; set; }
 
-        //Property Navigation
-        public ICollection<Photo> Photos { get; set; }
+        public string PhotoUrl { get; set; }
+        public ICollection<PhotosForDetailedDto> Photos { get; set; }
 
-        public User() { }
     }
 }

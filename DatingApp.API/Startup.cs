@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,15 +37,24 @@ namespace DatingApp.API
         // Called at runtime. Shell to add + hold services for DI.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(
+                opt =>
+                {
+                    opt.SerializerSettings.ReferenceLoopHandling =
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }
+            );
+            services.AddCors();
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddDbContext<DataContext>(o =>
                 o.UseSqlite(Configuration.GetConnectionString("defaultConnection"))); //appSettings.Dev.json
             services.AddScoped<IAuthRepository, AuthRepository>();
-            services.AddCors();
+            services.AddScoped<IDatingRepository, DatingRepository>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(o =>
+                .AddJwtBearer(options =>
                 {
-                    o.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         //--options to validate against ofr JWT auth
                         ValidateIssuerSigningKey = true,
@@ -94,11 +104,13 @@ namespace DatingApp.API
 
             //app.UseHttpsRedirection(); //redirects to http's':XXXX when possible
 
-            app.UseCors(req => req.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(req => req.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 
             // app.UseSwaggerUI(c =>
             // {
