@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Data
 {
-    
+
     /// <summary>
     /// Repository to deal w/ DB operations to Login or Register Users
     /// Impl of IAuthRepository that brings in the DBContext (middleware App<->DB)
@@ -25,10 +25,11 @@ namespace DatingApp.API.Data
 
         #region Methods for Authentication of User Login & Register
         /// <summary>
-        /// 
+        /// Verifies the users login credentials 
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="passWord"></param>
+        /// <param name="userName">Verified against username in DB to retrieve the User object</param>
+        /// <param name="passWord">Validates password.async  Salt-Key re-creates the security object 
+        /// and the password is recreated as a byte.  Passed value is compared against DB value byte-by-byte</param>
         /// <returns></returns>
         /// ----
         public async Task<User> Login(string userName, string passWord)
@@ -85,7 +86,11 @@ namespace DatingApp.API.Data
 
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
+            //convert passed string to array of bytes
             user.PasswordHash = passwordHash;
+
+            //Unique key for this specific crypto object
+            //Needed later to de-code the password when user is trying to log in
             user.PasswordSalt = passwordSalt;
 
             await _context.Users.AddAsync(user);
