@@ -33,9 +33,9 @@ import { appRoutes } from "./routes";
 
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     HttpClientModule,
-    FormsModule,
     BrowserAnimationsModule,
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(appRoutes)
@@ -45,3 +45,5 @@ import { appRoutes } from "./routes";
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+

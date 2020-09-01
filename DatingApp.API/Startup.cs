@@ -56,7 +56,7 @@ namespace DatingApp.API
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        //--options to validate against ofr JWT auth
+                        //--options to validate against our JWT auth
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
                             .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
@@ -124,3 +124,4 @@ namespace DatingApp.API
         }
     }
 }
+
