@@ -818,7 +818,7 @@ Create an Angular Service
 
 	Manually adding headers to Requests being sent to the Api
 
-		Create a variable below imports section to hold Header info to pass with the req
+		Create a variable in imports section to hold Header info to pass with the req
 		Create a new HttpHeader (K:V) this must be a legit header name
 		purpose:  After login a user has populated their username/pass that are being stored
 			in the browser's local storage.  We want to grab that authentication info which

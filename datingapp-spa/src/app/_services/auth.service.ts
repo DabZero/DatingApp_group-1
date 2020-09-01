@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { map } from "rxjs/operators";
 import { Observable } from 'rxjs';
 import { JwtHelperService } from "@auth0/angular-jwt"
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class AuthService {
-  baseUrl: string = "http://localhost:5000/api/auth/";
+  baseUrl: string = environment.apiUrl + "auth/";
   jwtHelper = new JwtHelperService();
   decodedToken: any;
 
@@ -18,7 +19,7 @@ export class AuthService {
   login(model: any): Observable<void> {
     return this.http.post(this.baseUrl + "login", model)
       .pipe(
-        map((response: any) => {                        //incomming req is a bearer (token: "token string")
+        map((response: any) => {                        //incomming resp is a bearer (token: "token string")
           const user = response;                        //user = this (k,V)
           if (user) {                                   //set token in same format on the browser local storage
             localStorage.setItem("token", user.token);
