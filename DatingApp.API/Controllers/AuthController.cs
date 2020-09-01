@@ -35,7 +35,7 @@ namespace DatingApp.API.Controllers
         // ----
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
-        { 
+        {
 
             //If userName has already been taken ... return BadRequest
             //

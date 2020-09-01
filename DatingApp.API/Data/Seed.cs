@@ -9,7 +9,7 @@ namespace DatingApp.API.Data
     {
         public async static void SeedUsers(DataContext context)
         {
-            //Check if DB Users table + NOT any elements exist
+            //Check if DB is empty ... if so, lets seed the data
             //
             if (!context.Users.Any())
             {
@@ -17,7 +17,7 @@ namespace DatingApp.API.Data
                 //
                 var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
 
-                //Use Newtonsoft to convert .NET <-> Json
+                //Use Newtonsoft to convert Json <-> .Net
                 //Read json data and convert into .NET User objects 
                 //Hold Users as a List ... pass text as a param
                 // 
@@ -25,6 +25,7 @@ namespace DatingApp.API.Data
 
                 foreach (var u in users)
                 {
+                    //Hord code the passwords for dummy data
                     byte[] passwordHash; byte[] passwordSalt;
                     CreatePasswordHash("1234", out passwordHash, out passwordSalt);
 

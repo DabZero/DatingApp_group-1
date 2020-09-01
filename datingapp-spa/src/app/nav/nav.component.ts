@@ -27,7 +27,7 @@ export class NavComponent implements OnInit {
           //            this.router.navigate(['/members'])    next=Req is sucessful + Resp has data from api
         },                                                  //route to this url after all successful req/resp
         error => { this.alertify.error(error); },
-        () => { this.router.navigate(['/members']); }      //alternate use complete():void after sucess req/resp
+        () => { this.router.navigate(['/members']); }      //alternate use complete():void => after sucess req/resp
       );
   }
   // If user is logged in, the token will exist in local storage + show welcome message
@@ -36,8 +36,10 @@ export class NavComponent implements OnInit {
 
     return this.authService.loggedin();
     // const token = localStorage.getItem("token");
-    // return !!token;
+    //   return !!token; 
   }
+
+
 
   // To log the user out, we remove token from local storage + show login Nav
   //
