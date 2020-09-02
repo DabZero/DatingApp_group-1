@@ -1,0 +1,10 @@
+<div class="container mt-5">
+    <div class="row">
+        <div *ngFor="let u of users" class="col-lg-2 col-md-3 col-sm-6">
+
+            <!--Parent passes "input" to the [@Input variable name] of the child-->
+            <app-member-card [user]="u"> </app-member-card>
+        </div>
+
+    </div>
+</div>
