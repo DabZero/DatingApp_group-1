@@ -1,0 +1,44 @@
+/* when someone hovers over the image scale 20% bigger x,y */
+.card:hover img{
+    transform: scale(1.2, 1.2);
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+    opacity: .9;
+}
+/* this allows the image to be scaled back when not being hovered over */
+.card img {
+    transform: scale(1.0, 1.0);
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+}
+/* in order to absolutely position the .member-icons (list of buttons) 
+this outer container needs to be position: relative */
+.card-img-wrapper {
+    overflow: hidden;   /*we dont want the images to flow outside of this wrapper container that is housing the img*/
+    position: relative;
+}
+
+.btn-primary{
+    background-color: orangered;
+    border-color: orangered;
+}
+
+.member-icons{
+    position: absolute;
+    bottom: -30%;           /*start below the page so we can use animations to make them come up from the bottom*/
+    left: 0;
+    right: 0;
+    margin-right: auto;     /*keeps list of icons centrally positioned*/
+    margin-left: auto;
+    opacity: 0;
+}
+
+/* list of icons will only show (oppacity 1) when you hover over them*/
+.card-img-wrapper:hover .member-icons{
+    bottom: 0;
+    opacity: 1;
+}
+/* gives the list of icons the appearance of sliding up */
+.animate {
+    transition: all 0.3s ease-in-out;
+}
