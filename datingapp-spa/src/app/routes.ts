@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from "./home/home.component";
 import { MemberListComponent } from "./members/member-list/member-list.component";
+import { MemberDeailComponent } from "./members/member-deail/member-deail.component";
 import { MessagesComponent } from "./messages/messages.component";
 import { ListComponent } from "./list/list.component";
 import { AuthGuard } from "./_guards/auth.guard";
@@ -13,9 +14,10 @@ export const appRoutes: Routes = [
         canActivate: [AuthGuard],                                   //This single guard (one of many)
         children: [
             { path: "members", component: MemberListComponent },
+            { path: "members/:id", component: MemberDeailComponent},
             { path: "messages", component: MessagesComponent },
             { path: "lists", component: ListComponent }
-        ]
+        ] 
     },
 
     { path: "**", redirectTo: "", pathMatch: "full" }
