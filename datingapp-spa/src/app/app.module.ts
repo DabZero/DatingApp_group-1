@@ -19,6 +19,7 @@ import { ListComponent } from './list/list.component';
 import { MessagesComponent } from './messages/messages.component';
 import { appRoutes } from "./routes";
 import { MemberCardComponent } from './members/member-card/member-card.component';
+import { MemberDeailComponent } from "./members/member-deail/member-deail.component";
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -34,7 +35,8 @@ export function tokenGetter() {
     MemberListComponent,
     ListComponent,
     MessagesComponent,
-    MemberCardComponent
+    MemberCardComponent,
+    MemberDeailComponent
 
   ],
   imports: [
