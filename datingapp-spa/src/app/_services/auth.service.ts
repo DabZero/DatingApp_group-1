@@ -12,6 +12,8 @@ import { environment } from 'src/environments/environment';
 export class AuthService {
   baseUrl: string = environment.apiUrl + "auth/";
   jwtHelper = new JwtHelperService();
+  
+  //this.decodedToken.exp , this.decodedToken.iat, this.decodedToken.nbf, this.decodedToken.nameid =user.id
   decodedToken: any;
 
   constructor(private http: HttpClient) { }
@@ -26,7 +28,7 @@ export class AuthService {
             this.decodedToken = this.jwtHelper.decodeToken(user.token);     //decode (v) token string and hold as var
             console.log(this.decodedToken);                                 //to see the fields of jwt decode method in browser
             /* console.log("user: " + this.decodedToken.unique_name);    --> fields comes from authController ...claims + tokenDescriptor
-             this.decodedToken.exp , this.decodedToken.iat, this.decodedToken.nbf, this.decodedToken.nameid*/
+             this.decodedToken.exp , this.decodedToken.iat, this.decodedToken.nbf, this.decodedToken.nameid =user.id*/
           }
         })  //--map transform one-at-a-time
       ); //--pipe transform to Observable
