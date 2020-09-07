@@ -27,7 +27,8 @@ import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { AlertifyService } from './_services/alertify.service';
 import { AuthGuard } from './_guards/auth.guard';
 import { UserService } from './_services/user.service';
-
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { MemberEditResolver } from "./_resolvers/member-edit.resolver";
 
 
 export function tokenGetter() {
@@ -46,6 +47,7 @@ export function tokenGetter() {
     MessagesComponent,
     MemberCardComponent,
     MemberDetailComponent,
+    MemberEditComponent,
 
 
   ],
@@ -74,7 +76,8 @@ export function tokenGetter() {
     AuthGuard,
     UserService,
     MemberDetailResolver,
-    MemberListResolver
+    MemberListResolver,
+    MemberEditResolver
   ],
 
   bootstrap: [AppComponent]
