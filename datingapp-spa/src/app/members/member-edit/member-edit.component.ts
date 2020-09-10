@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { ActivatedRoute, RoutesRecognized } from '@angular/router';
 import { AlertifyService } from 'src/app/_services/alertify.service';
@@ -12,16 +12,16 @@ import { NgForm } from '@angular/forms';
 export class MemberEditComponent implements OnInit {
   user: User;
   @ViewChild("editForm", { static: true }) editForm: NgForm;
+  /*  static - True to resolve query results before change detection runs, 
+false to resolve after change detection. Defaults to false.*/
+  @HostListener("window:beforeunload", ["$event"])
+  unloadNotification($event: any) {
+    if (this.editForm.dirty) {
+      //before the document is about to be unloaded (close the browser window) return a browser pop-up
+      $event.returnValue = true;
+    }
+  }
 
-  /*Property decorator that configures a view query. 
-  The change detector looks for the first element or the directive 
-  matching the selector in the view DOM. If the view DOM changes, 
-  and a new child matches the selector, the property is updated.
-  Metadata Properties:
-
-selector - The directive type or the name used for querying.
-read - Used to read a different token from the queried elements.
-static - True to resolve query results before change detection runs, false to resolve after change detection. Defaults to false.*/
 
   constructor(private route: ActivatedRoute, //<-- data (Url path) from Routes.ts -> resolver()
     private alertify: AlertifyService) { }
