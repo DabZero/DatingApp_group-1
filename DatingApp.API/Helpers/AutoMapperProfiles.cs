@@ -18,7 +18,8 @@ namespace DatingApp.API.Helpers
         //
         public AutoMapperProfiles()
         {
-
+            // <source, destination) --Take in a Source and return a Destination
+            //
             CreateMap<User, UserForListDto>()
 
                 .ForMember(dest => dest.PhotoUrl,     //destination member = dto.prop
@@ -37,12 +38,17 @@ namespace DatingApp.API.Helpers
             CreateMap<User, UserForDetailedDto>()
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(
                     u => u.Photos.Where(p => p.IsMain != false).FirstOrDefault().Url)
-                ).ForMember(dest => dest.Age, opt => opt.MapFrom(    
-                    u => u.DateOfBirth.CalculateAge()               
+                ).ForMember(dest => dest.Age, opt => opt.MapFrom(
+                    u => u.DateOfBirth.CalculateAge()
                 ));
 
-                
+
             CreateMap<Photo, PhotosForDetailedDto>();
+
+
+            // <source, destination) --Take in a Source and return a Destination
+            //
+            CreateMap<UserForUpdateDto, User>();
         }
     }
 }
