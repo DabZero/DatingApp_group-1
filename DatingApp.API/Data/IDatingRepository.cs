@@ -25,7 +25,16 @@ namespace DatingApp.API.Data
         /// ----
         void Delete<T>(T entity) where T : class;
 
+
+        /// <summary>
+        /// This method calls EF change tracker, sees all tracked changes
+        /// Saves all tracked changes to the DB
+        /// </summary>
+        /// <returns>Returs bool    True = Tracked changes saved to the DB  
+        ///                   -or-  False= Nothing saved</returns>
         Task<bool> SaveAll();
+
+
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(int id);
     }
