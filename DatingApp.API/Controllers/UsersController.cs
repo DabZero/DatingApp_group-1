@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.API.Controllers
 {
 
-    //[Authorize]                         //Any access to this controller requires authorization
+    [Authorize]                         //Any access to this controller requires authorization
     [Route("api/[Controller]")]
     [ApiController]
     public class UsersController : ControllerBase
