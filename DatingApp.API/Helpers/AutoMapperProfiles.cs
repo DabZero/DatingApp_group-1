@@ -49,6 +49,15 @@ namespace DatingApp.API.Helpers
             // <source, destination) --Take in a Source and return a Destination
             //
             CreateMap<UserForUpdateDto, User>();
+
+
+            // <source, destination) --Take in a Source and return a Destination
+            //
+            CreateMap<PhotoForCreationDto, Photo>();
+
+            // <source, destination) --Take in a Source and return a Destination
+            //
+            CreateMap<Photo, PhotoForReturnDto>();
         }
     }
 }
