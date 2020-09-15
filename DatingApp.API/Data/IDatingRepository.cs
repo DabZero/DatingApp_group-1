@@ -37,5 +37,12 @@ namespace DatingApp.API.Data
 
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(int id);
+
+        /// <summary>
+        /// Get a Photo object from DB based on Photo Id property
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns a given Photo object based on what id you pass</returns>
+        Task<Photo> GetPhoto(int id);
     }
 }

@@ -16,7 +16,7 @@ namespace DatingApp.API.Data
         }
         #endregion
         /// <summary>
-        /// Start tracking this object prior to being saved
+        /// Starts tracking this object prior to being saved
         /// </summary>
         /// <typeparam name="T">Can be any object type (Photo, User etc...)</typeparam>
         /// ----
@@ -28,7 +28,7 @@ namespace DatingApp.API.Data
 
 
         /// <summary>
-        /// Start tracking this object prior to being deleted
+        /// Starts tracking this object prior to being deleted
         /// </summary>
         /// <typeparam name="T">Can be any object type (Photo, User etc...)</typeparam>
         /// ----
@@ -79,5 +79,15 @@ namespace DatingApp.API.Data
             //
             return await _context.SaveChangesAsync() > 0;
         }
+
+
+
+        public async Task<Photo> GetPhoto(int id)
+        {
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+
+            return photo;
+        }
+
     }
 }
