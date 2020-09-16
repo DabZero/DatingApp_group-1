@@ -3,3 +3,11 @@
     width: 100px !important;  //override the bootstarp styling
     margin-bottom: 2px;     //add some space between picture and below buttons  
 }
+
+.nv-file-over{
+    border: dotted 3px red;     //makes red box around upload area when trying to
+}                                  //hover over teh area
+
+input[type=file]{   //hides the text from multiple & single .. bring in a file  <input type="file"
+    color: transparent;
+}
