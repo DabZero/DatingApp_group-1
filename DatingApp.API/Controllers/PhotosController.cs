@@ -49,9 +49,10 @@ namespace DatingApp.API.Controllers
             _cloudinary = new Cloudinary(acc);
         }
 
-        //
+
+        // GET  api/users/5/photos/{id}
         // GetPhoto is the name of this route
-        //
+        // ---
         [HttpGet("{id}", Name = "GetPhoto")]
         public async Task<IActionResult> GetPhoto(int id)
         {
@@ -67,8 +68,9 @@ namespace DatingApp.API.Controllers
             return Ok(photo);
         }
 
-        // api/users/5/photos
+        // POST  api/users/5/photos
         //
+        // ---
         [HttpPost]
         public async Task<IActionResult> AddPhotoForUser
         (int userId, [FromForm] PhotoForCreationDto photoForCreationDto)
@@ -158,6 +160,52 @@ namespace DatingApp.API.Controllers
             }
 
             else return BadRequest("Could not add the Photo");
+
+        }
+        //POST  api/users/5/photos/{photoId}/setMain
+        //
+        // ---
+        [HttpPost("{photoId}/setMain")]
+        public async Task<IActionResult> setMainPhoto(int userId, int photoId)
+        {
+            // Check if the current User is the one that passed the token to the server
+            // Trying to match passed id to what is in their token ... see authController line 79
+            // User = check the passed token and get info from it .. we are [Authorize] this request
+            //
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            // Call the repo method to return a single user from the repo <-> DB based on Id
+            //
+            User user = await _repo.GetUser(userId);
+
+            //Does this photo exist in this User's photo collection (yes/No)
+            //
+            if (!user.Photos.Any(p => p.Id == photoId))
+                return Unauthorized("No matched photos");
+
+            // Since exists, Get the photo from the repo
+            //
+            var photoFromRepo = await _repo.GetPhoto(photoId);
+
+            //Is this passed photo the main photo for this user already?
+            //
+            if (photoFromRepo.IsMain) return BadRequest("This is already the main photo");
+
+            // Get the existing main photo for a partucular user
+            //
+            var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
+
+            currentMainPhoto.IsMain = false;
+
+            photoFromRepo.IsMain = true;
+
+            // If we are able to save these updates 
+            //
+            if (await _repo.SaveAll()) return NoContent();
+
+            else return BadRequest("Could not set this photo to main");
+
 
         }
     }
