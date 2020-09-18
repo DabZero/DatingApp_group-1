@@ -1,10 +1,15 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Data
 {
+
+    /// <summary>
+    ///  CRUD Methods to deal with Photo.cs & User.cs to/from the DB
+    /// </summary>
     public class DatingRepository : IDatingRepository
     {
 
@@ -15,6 +20,7 @@ namespace DatingApp.API.Data
             _context = context;
         }
         #endregion
+
         /// <summary>
         /// Starts tracking this object prior to being saved
         /// </summary>
@@ -72,6 +78,7 @@ namespace DatingApp.API.Data
         /// </summary>
         /// <returns>Returs bool    True = Tracked changes saved to the DB  
         ///                   -or-  False= Nothing saved</returns>
+        /// ---
         public async Task<bool> SaveAll()
         {
 
@@ -81,7 +88,6 @@ namespace DatingApp.API.Data
         }
 
 
-
         public async Task<Photo> GetPhoto(int id)
         {
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
@@ -89,5 +95,10 @@ namespace DatingApp.API.Data
             return photo;
         }
 
+        public async Task<Photo> GetMainPhotoForUser(int userId)
+        {
+            return await _context.Photos.Where(p => p.UserId == userId)
+                .FirstOrDefaultAsync(p => p.IsMain);
+        }
     }
 }

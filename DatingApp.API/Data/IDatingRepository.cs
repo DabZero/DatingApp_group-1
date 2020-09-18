@@ -6,7 +6,7 @@ namespace DatingApp.API.Data
 {
     /// <summary>
     /// Interface to seperate the concerns of DB Operations (CRUD)
-    /// Methods to be defined by Implementation -"Add", "Delete", "SaveAll", "Get User/s"  
+    /// Methods to be defined by Implementation -"Add", "Delete", "SaveAll", "Get"  
     /// </summary>
     /// 
     public interface IDatingRepository
@@ -39,10 +39,18 @@ namespace DatingApp.API.Data
         Task<User> GetUser(int id);
 
         /// <summary>
-        /// Get a Photo object from DB based on Photo Id property
+        ///  Gets a specific Photo.cs based on the Photo Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Returns a given Photo object based on what id you pass</returns>
+        /// <param name="id">The Id of a specific Photo.cs</param>
+        /// <returns>A specific Photo.cs</returns>
         Task<Photo> GetPhoto(int id);
+
+
+        /// <summary>
+        /// Calls DB to retrieve the isMain photo,cs of a specific user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Photo object where isMain Property = true</returns>
+        Task<Photo> GetMainPhotoForUser(int userId);
     }
 }
