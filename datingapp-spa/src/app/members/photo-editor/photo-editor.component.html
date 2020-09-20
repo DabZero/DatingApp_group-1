@@ -5,7 +5,9 @@
     <img src="{{p.url}}" class="img-thumbnail p1" alt="">
 
     <div class="text-center">
-      <button type="button" class="btn btn-sm">Main</button>
+      <button type="button" class="btn btn-sm mr-1" (click)="setMainPhoto(p)"
+        [ngClass]="p.isMain ? 'btn-success active' : 'btn-secondary'" 
+        [disabled]="p.isMain">Main</button>
       <button type="button" class="btn btn-sm btn-danger">
         <i class="fa fa-trash-o"></i></button>
     </div>

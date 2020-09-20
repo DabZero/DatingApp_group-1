@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Photo } from 'src/app/_models/photo';
 import { FileUploader } from 'ng2-file-upload';
 import { AuthService } from 'src/app/_services/auth.service';
@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PhotoEditorComponent implements OnInit {
   @Input() photos: Photo[];
+  @Output() getMemberPhotoChange = new EventEmitter<string>();
   uploader: FileUploader;
   hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl;
@@ -69,26 +70,35 @@ export class PhotoEditorComponent implements OnInit {
     };
   }
 
-  // setMainPhoto(photo: Photo) {
-  //   this.userService
-  //     .setMainPhoto(this.authService.decodedToken.nameid, photo.id)
-  //     .subscribe(
-  //       () => {
-  //         this.currentMain = this.photos.filter(p => p.isMain === true)[0];
-  //         this.currentMain.isMain = false;
-  //         photo.isMain = true;
-  //         this.authService.changeMemberPhoto(photo.url);
-  //         this.authService.currentUser.photoUrl = photo.url;
-  //         localStorage.setItem(
-  //           'user',
-  //           JSON.stringify(this.authService.currentUser)
-  //         );
-  //       },
-  //       error => {
-  //         this.alertify.error(error);
-  //       }
-  //     );
-  // }
+  setMainPhoto(photo: Photo) {
+
+    //This takes mbrId, PhotoId and sets this single Photo's isMain(turns off the other).  returns nothing
+    this.userService
+      .setMainPhoto(this.authService.decodedToken.nameid, photo.id)
+
+      .subscribe(
+        () => {
+          //"active" = current main.  Since we are changing what is main by passing photo.id to service
+          //this is not reflected in our template.  Turn off current main and replace with new passed photo.id
+          this.currentMain = this.photos.filter(p => p.isMain === true)[0];
+          this.currentMain.isMain = false;
+          photo.isMain = true;
+          // Takes the single Photo.cs the Client has clicked on and emits the "photoUrl"
+          // value as an event that updates this variable
+          this.getMemberPhotoChange.emit(photo.url)
+          // this.authService.changeMemberPhoto(photo.url);
+          // this.authService.currentUser.photoUrl = photo.url;
+
+          // localStorage.setItem(
+          //   'user',
+          //   JSON.stringify(this.authService.currentUser)
+          // );
+        },
+        error => {
+          this.alertify.error(error);
+        }
+      );
+  }
 
   // deletePhoto(id: number) {
   //   this.alertify.confirm('Are you sure you want to delete this photo?', () => {

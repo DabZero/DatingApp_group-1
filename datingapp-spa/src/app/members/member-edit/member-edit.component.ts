@@ -13,10 +13,10 @@ import { AuthService } from 'src/app/_services/auth.service';
 })
 
 export class MemberEditComponent implements OnInit {
-  
+
   user: User;
   @ViewChild("editForm", { static: true }) editForm: NgForm; /*  static - True to resolve query results before change detection runs, false to resolve after change detection. Defaults to false.*/
-  
+
   @HostListener("window:beforeunload", ["$event"])
   unloadNotification($event: any) {
     if (this.editForm.dirty) {
@@ -40,14 +40,19 @@ export class MemberEditComponent implements OnInit {
   updateUser() {
 
     this.userService.updateUser(this.authService.decodedToken.nameid, this.user)
-    .subscribe(next => {
+      .subscribe(next => {
 
-      this.alertify.success("Successful update");
-      this.editForm.reset(this.user);
-    }, 
-    error => {this.alertify.error(error)
-    });
+        this.alertify.success("Successful update");
+        this.editForm.reset(this.user);
+      },
+        error => {
+          this.alertify.error(error)
+        });
 
+  }
+
+  updateMainPhoto(photoUrl: string) {
+    this.user.photoUrl = photoUrl;
   }
 
 }
