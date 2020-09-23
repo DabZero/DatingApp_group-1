@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/_services/auth.service';
 export class MemberEditComponent implements OnInit {
 
   user: User;
+  photoUrl: string;
   @ViewChild("editForm", { static: true }) editForm: NgForm; /*  static - True to resolve query results before change detection runs, false to resolve after change detection. Defaults to false.*/
 
   @HostListener("window:beforeunload", ["$event"])
@@ -35,6 +36,7 @@ export class MemberEditComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.user = data['user']; //access key of route resolver resolve: { user: MemberEditResolver } 
     })
+    this.authService.currentPhotoUrl.subscribe(p => this.photoUrl = p);
   }
 
   updateUser() {
