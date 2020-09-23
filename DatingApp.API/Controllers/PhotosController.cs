@@ -208,5 +208,72 @@ namespace DatingApp.API.Controllers
 
 
         }
+
+        // DELETE  api/users/{userId}/photos/{photId}
+        //
+        // ---
+        [HttpDelete("{photoId}")]
+        public async Task<IActionResult> DeletePhoto(int userId, int photoId)
+        {
+            // Check if the current User is the one that passed the token to the server
+            // Trying to match passed id to what is in their token ... see authController line 79
+            // User = check the passed token and get info from token .. we are [Authorize] this request
+            //
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            // Call the repo method to return a single user from the repo <-> DB based on Id
+            //
+            User user = await _repo.GetUser(userId);
+
+            //Does this photo exist in this User's photo collection (yes/No)
+            //
+            if (!user.Photos.Any(p => p.Id == photoId))
+                return Unauthorized("No matched photos");
+
+            // Since exists, Get the photo from the repo
+            //
+            var photoFromRepo = await _repo.GetPhoto(photoId);
+
+            //Is this passed photo the main photo for this user already?
+            //
+            if (photoFromRepo.IsMain) return BadRequest("Cannot delete your main photo");
+
+            // Only Cloudinary photos have a publicId
+            //
+            if (photoFromRepo.PublicId != null)
+            {
+                // How to delete a photo in the Cloudinary 3rd party storage
+                // https://cloudinary.com/documentation/image_upload_api_reference#destroy_method
+                // Deleting a Cloudinary photo requires     1. Make separate "DeleteParams"
+                // 2. Pass delete params into its destroy method
+                //
+                var deletionParams = new DeletionParams(photoFromRepo.PublicId);
+
+                // Destroy is the method being invoked to delete on Cloudinary.com location
+                //
+                var deletionResult = _cloudinary.Destroy(deletionParams);
+
+                // results from successful deletion = string with value "ok"
+                //
+                if (deletionResult.Result == "ok")
+                {
+                    _repo.Delete(photoFromRepo);
+                }
+            }
+
+
+            if (photoFromRepo.PublicId == null)
+            {
+                _repo.Delete(photoFromRepo);
+            }
+
+            if (await _repo.SaveAll())
+            {
+                return Ok();
+            }
+            else return BadRequest("Failed to delete the Photo");
+
+        }
     }
 }

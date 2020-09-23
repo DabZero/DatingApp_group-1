@@ -2,7 +2,7 @@
 
     <div class="container">
 
-        <a class="navbar-brand" [routerLink]="['/home']">Dating App</a>
+        <a class="navbar-brand" [routerLink]="['']">Dating App</a>
 
         <!--Only show NavBar catagories if user is logged in -->
         <ul class="navbar-nav mr-auto" *ngIf="loggedIn()">
@@ -21,6 +21,9 @@
 
         <!--Drop Down menu will display if the User is logged in ...using NGXBootstrap-->
         <div class="dropdown" *ngIf="loggedIn()" dropdown>
+            <span class="mr-1">
+                <img src="{{photoUrl}}" alt="Current User Image">
+            </span>
             <a class="dropdown-toggle text-light" dropdownToggle>
                 Welcome {{authService.decodedToken?.unique_name | titlecase}}
             </a>

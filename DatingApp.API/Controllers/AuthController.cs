@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.DTOs;
 using DatingApp.API.Models;
@@ -22,9 +23,11 @@ namespace DatingApp.API.Controllers
 
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
+            _mapper = mapper;
             this._config = config;
             this._repo = repo;
         }
@@ -109,11 +112,22 @@ namespace DatingApp.API.Controllers
             //
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            //Return the JWT Token as an (obj) Token to the Client
-            //Serialize/Write token (obj) as a response back to the client
+            // Convert user to Dto with photoUrl info, not full user so, only limited info passed
+            // This is passed on login so that, we can save the main photo will be passed to 
+            // local storage.  We will use photoUrl to display member picture in NavBar
+            //
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
+            // Return the JWT Token as an (obj) Token to the Client
+            // Serialize/Write token (obj) as a response back to the client
+            // Anonymous object passed that we can customize
             //
             return Ok(
-                new { token = tokenHandler.WriteToken(token) }
+                new
+                {
+                    token = tokenHandler.WriteToken(token),
+                    user
+                }
             );
         }
     }

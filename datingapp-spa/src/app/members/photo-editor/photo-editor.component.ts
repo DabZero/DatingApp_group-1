@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 export class PhotoEditorComponent implements OnInit {
   @Input() photos: Photo[];
   @Output() getMemberPhotoChange = new EventEmitter<string>();
+
   uploader: FileUploader;
   hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl;
@@ -85,7 +86,10 @@ export class PhotoEditorComponent implements OnInit {
           photo.isMain = true;
           // Takes the single Photo.cs the Client has clicked on and emits the "photoUrl"
           // value as an event that updates this variable
-          this.getMemberPhotoChange.emit(photo.url)
+          /* this.getMemberPhotoChange.emit(photo.url) //being replaced by below*/
+          this.authService.changeMemberPhoto(photo.url);
+          this.authService.currentUser.photoUrl = photo.url;
+          localStorage.setItem("user", JSON.stringify(this.authService.currentUser));
           // this.authService.changeMemberPhoto(photo.url);
           // this.authService.currentUser.photoUrl = photo.url;
 
