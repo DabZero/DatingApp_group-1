@@ -209,7 +209,7 @@ namespace DatingApp.API.Controllers
 
         }
 
-        // DELETE  api/users/{userId}/photos/{photId}
+        // DELETE  api/users/{userId}/photos/{photoId}
         //
         // ---
         [HttpDelete("{photoId}")]
