@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DatingApp.API.DTOs
@@ -8,13 +9,38 @@ namespace DatingApp.API.DTOs
     /// </summary>
     public class UserForRegisterDto
     {
+        public string Gender { get; set; }
+
         [Required]
-        [MinLength(4, ErrorMessage = "Must be at least 4 characters")]
+        [MinLength(3, ErrorMessage = "UserName must be at least 3 characters")]
         public string Username { get; set; }
 
+        [Required]
+        public string KnownAs { get; set; }
+
+        [Required]
+        public DateTime DateOfBirth { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        [Required]
+        public string Country { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 4, ErrorMessage = "Must be between 4-50 characters")]
         public string Password { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime LastActive { get; set; }
+
+        public UserForRegisterDto()
+        {
+            this.Created = DateTime.Now;
+            this.LastActive = DateTime.Now;
+        }
+
+
     }
 }
