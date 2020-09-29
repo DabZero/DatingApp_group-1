@@ -150,11 +150,11 @@ namespace DatingApp.API.Controllers
                 //
                 var phototoReturn = _mapper.Map<PhotoForReturnDto>(photo);
 
-                //Show location header of created resource
+                // Show location header of created resource
                 // string routeName = Name [httpGet{"{id}"}, Nme = "GetPhoto"] 
-                // object routeValues, new object with values from passed userId + 
-                //                     photo(mapped Dto from above) 
-                // object value = The object being created
+                // object routeValues= new object with values (params) that are required
+                // by this route to call the controler method
+                // object value = The object being created and returned
                 return CreatedAtRoute("GetPhoto",
                     new { userId = userId, id = photo.Id }, phototoReturn);
             }

@@ -47,13 +47,25 @@ namespace DatingApp.API.Controllers
 
 
             else
-            {   //Create User with encrpted password & return status coode
+            {   // Create User with encrpted password & return status coode
+                // Pass Dto w/ all fields to be mapped into a User Object
                 //
-                var userToCreate = new User { UserName = userForRegisterDto.Username };
+                var userToCreate = _mapper.Map<User>(userForRegisterDto);
 
                 User createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
 
-                return StatusCode(201);
+                var userToReturn = _mapper.Map<UserForDetailedDto>(createdUser);
+
+                // Show location header of created resource 
+                // 
+                //
+                return CreatedAtRoute("GetUser",
+                new
+                {
+                    Controller = "Users",
+                    id = createdUser.Id
+                },
+                  userToReturn);
             }
         }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from "rxjs/operators";
 import { Observable } from 'rxjs';
-import {BehaviorSubject} from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { JwtHelperService } from "@auth0/angular-jwt"
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
@@ -23,7 +23,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  changeMemberPhoto(photoUrl:string){
+  changeMemberPhoto(photoUrl: string) {
     this.photoUrl.next(photoUrl);
   }
 
@@ -34,8 +34,8 @@ export class AuthService {
           const user = response;                        //user = this response (k,V)
           if (user) {                                   //set token in same format on the browser local storage
             //user.token = response.key
-            localStorage.setItem("token", user.token);
-            //user.user = response.key (comes as an object from AuthController login OK resonse)
+            localStorage.setItem("token", user.token); 
+            //user.user = response.key (comes as an object from AuthController login OK resonse + object)
             localStorage.setItem("user", JSON.stringify(user.user))
             this.decodedToken = this.jwtHelper.decodeToken(user.token);     //decode (v) token string and hold as var
             this.currentUser = user.user;
@@ -48,8 +48,8 @@ export class AuthService {
       ); //--pipe transform to Observable
   }
 
-  register(model: any): Observable<object> {
-    return this.http.post(this.baseUrl + "register", model);
+  register(user: User): Observable<object> {
+    return this.http.post(this.baseUrl + "register", user);
   }
 
   loggedin() {

@@ -47,7 +47,7 @@ namespace DatingApp.API.Controllers
         //Get api/users/{id}
         //
         // ---
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await _repo.GetUser(id);

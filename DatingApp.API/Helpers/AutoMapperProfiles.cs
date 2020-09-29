@@ -58,6 +58,10 @@ namespace DatingApp.API.Helpers
             // <source, destination) --Take in a Source and return a Destination
             //
             CreateMap<Photo, PhotoForReturnDto>();
+
+            // <source, destination) --Take in a Source and return a Destination
+            //
+            CreateMap<UserForRegisterDto, User>();
         }
     }
 }
