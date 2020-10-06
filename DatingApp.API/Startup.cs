@@ -34,7 +34,7 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
-        // Called at runtime. Shell to add + hold services for DI.
+        // Add scoped = new instance per request
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson(
@@ -51,6 +51,7 @@ namespace DatingApp.API
                 o.UseSqlite(Configuration.GetConnectionString("defaultConnection"))); //appSettings.Dev.json
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IDatingRepository, DatingRepository>();
+            services.AddScoped<LogUserActivity>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

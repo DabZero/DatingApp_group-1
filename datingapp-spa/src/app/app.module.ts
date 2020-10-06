@@ -10,6 +10,7 @@ import { JwtModule } from "@auth0/angular-jwt";
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { FileUploadModule } from 'ng2-file-upload';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TimeagoModule } from 'ngx-timeago';
 
 import { AuthService } from "./_services/auth.service";
 import { AppComponent } from './app.component';
@@ -60,6 +61,7 @@ export function tokenGetter() {
     FormsModule,
     ReactiveFormsModule,
     BrowserModule,
+    TimeagoModule.forRoot(),
     HttpClientModule,
     BrowserAnimationsModule,
     BsDatepickerModule.forRoot(),
