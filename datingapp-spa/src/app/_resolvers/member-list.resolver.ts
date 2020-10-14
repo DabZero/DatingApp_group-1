@@ -9,12 +9,15 @@ import { catchError } from "rxjs/operators";
 
 @Injectable()
 export class MemberListResolver implements Resolve<User[]>{
+    pageNumber = 1;
+    pageSize = 5;
 
     constructor(private userService: UserService,
         private router: Router, private alertify: AlertifyService) { }
 
+    //{ path: "members", component: MemberListComponent, resolve: { users: MemberListResolver } },
     resolve(route: ActivatedRouteSnapshot): Observable<User[]> {
-        return this.userService.getUsers()
+        return this.userService.getUsers(this.pageNumber, this.pageSize)
             .pipe(              //pipe is used here just to deal with potentail error
                 catchError(
                     error => {
@@ -25,9 +28,9 @@ export class MemberListResolver implements Resolve<User[]>{
             )
     }
     /*Get the user that Matches the route params we expect to get
-    Return an error and redirect to naother page if we have a problem 
-    if no problem, continue to teh route that is being activated
-    GOAL - Get teh data from teh root vs. going to userService to get it*/
+    Return an error and redirect to another page if we have a problem 
+    if no problem, continue to the route that is being activated
+    GOAL - Get the data from the route vs. going to userService to get it*/
 }
 
 

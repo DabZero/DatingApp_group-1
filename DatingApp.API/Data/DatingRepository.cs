@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Helpers;
 using DatingApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,10 +65,17 @@ namespace DatingApp.API.Data
         /// </summary>
         /// <returns>Return all User objects as a List from DB</returns>
         /// ----
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            List<User> users = await _context.Users.Include(u => u.Photos).ToListAsync();
-            return users;
+            // Get users from the context using EF Core but, do not execute, just hold
+            //
+            var users = _context.Users.Include(u => u.Photos);
+
+            // Pass all users from DB as a param to the PagedList<T> object 
+            // A new instance of PagedList is created by the CreateAsync() which
+            // accepts the queried user objects + params and generates a new PL object
+            //
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
 
