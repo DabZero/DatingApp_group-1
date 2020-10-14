@@ -18,7 +18,8 @@ export class MemberListComponent implements OnInit {
   ngOnInit(): void {
     //  this.loadUsers(); 
     //-- This is using route resolver to grab the data and make it avaialable prior to component load
-    this.route.data.subscribe(data => { this.users = data['users'] })
+    //--since data is a PaginatedResult<T> we need to specify the body data held in "result"
+    this.route.data.subscribe(data => { this.users = data['users'].result; })
   }
 
 

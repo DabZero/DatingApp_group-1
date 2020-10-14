@@ -29,16 +29,23 @@ namespace DatingApp.API.Controllers
 
 
 
-        // Get api/users/
+        // Get api/users?query string i.e. pageSize=xx&pageNumber=xx
         // 
         // ----
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
         {
 
-            var users = await _repo.GetUsers();
+            PagedList<Models.User> users = await _repo.GetUsers(userParams);
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+
+            // Add the pagination to the response headers 
+            // Dto is being sent as a passed object of ActionResult w/ Response body
+            // Paging data is being sent as the Response header
+            //
+            Response.AddPagination(users.CurrentPage,
+            users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(usersToReturn);
         }

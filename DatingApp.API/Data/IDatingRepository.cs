@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DatingApp.API.Helpers;
 using DatingApp.API.Models;
 
 namespace DatingApp.API.Data
@@ -34,8 +35,18 @@ namespace DatingApp.API.Data
         ///                   -or-  False= Nothing saved</returns>
         Task<bool> SaveAll();
 
+        /// <summary>
+        /// Returns a PagedList object that inherits List.  So, PagedList is just a List of 
+        /// type=Users that, we have added 5 properties.  These extra 5 properties are being
+        /// calculated to initialize the PagedList object that it can be returned
+        /// as a List of users + its extra properties.  
+        /// UserParams has 2 properties that are being passed to calculate the remaining properties
+        /// of the PagedList object which is being returned
+        /// </summary>
+        /// <param name="userParams"></param>
+        /// <returns>A PagedListObject</returns>
+        Task<PagedList<User>> GetUsers(UserParams userParams);
 
-        Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(int id);
 
         /// <summary>
