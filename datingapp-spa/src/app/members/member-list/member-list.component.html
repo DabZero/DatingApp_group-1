@@ -8,3 +8,17 @@
 
     </div>
 </div>
+
+<div class="d-flex justify-content-center">
+    <pagination class="pagination" [boundaryLinks]="true" [totalItems]="pagination.totalItems" [itemsPerPage]="pagination.itemsPerPage"
+        (pageChanged)="pageChanged($event)" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;"
+        lastText="&raquo;">
+
+    </pagination>
+</div>
+<!-- [(ngModel)]="pagination.currentPage" 
+[xxx] = properties of Pagination component from bootstrap pagination
+(xxx) = Event emmitter object of Pagination component {page, itemsPerPage} 
+assignment of bs Pagination fields to match pagination. ts interface
+display symbols forward and backward setters to change page 
+-->

@@ -19,7 +19,8 @@ export class MemberDetailComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
-    //this.loadUser();
+    //this.loadUser(); vs. Use RouteResolver which grabs the route
+    //{ path: "members/:id", component: MemberDetailComponent, resolve: { user: MemberDetailResolver } },
     this.route
       .data.subscribe(data => { this.user = data['user'] })
 
