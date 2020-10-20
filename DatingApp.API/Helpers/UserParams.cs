@@ -6,13 +6,16 @@ namespace DatingApp.API.Helpers
     /// </summary>
     public class UserParams
     {
-        private const int MaxPageSize = 50;
-        public int PageNumber { get; set; } = 1;
+        public int MinAge { get; set; } = 18;
+        public int MaxAge { get; set; } = 99;
+        public string Gender { get; set; }
+        public int UserId { get; set; }               //Filter out current user
+        public int PageNumber { get; set; } = 1;    //Which page is Client on
+        private int pageSize = 10;                  //max items per page
 
-        // Max users per page
-        //
-        private int pageSize = 10;
-        public int PageSize
+        private const int MaxPageSize = 50;
+
+        public int PageSize     //getter/setter for more contro over backed pageSize
         {
             get { return pageSize; }
             set
