@@ -14,7 +14,12 @@ export class MemberListComponent implements OnInit {
   users: User[];
   user: User = JSON.parse(localStorage.getItem("user"));
   userParams: any = {};
+  genderList: [
+    { value: "male", display: "Males" },
+    { value: "female", display: "Females" }
+  ];
   pagination: Pagination;
+
 
 
   constructor(private service: UserService,
@@ -33,6 +38,7 @@ export class MemberListComponent implements OnInit {
     this.userParams.gender = (this.user.gender == 'female') ? 'male' : 'female';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
+
   }
   // When bottom page pagination links are clicked
   //
