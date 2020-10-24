@@ -35,7 +35,7 @@ export class UserService {
       params = params.append("gender", userParams.gender);
     }
 
-    return this.http.get<User[]>(this.baseUrl + "users", { observe: "response", params })
+      return this.http.get<User[]>(this.baseUrl + "users", { observe: "response", params })
       .pipe(
         map(response => {
           paginatedResult.result = response.body;
