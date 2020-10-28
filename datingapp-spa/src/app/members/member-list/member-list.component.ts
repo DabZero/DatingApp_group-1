@@ -12,11 +12,11 @@ import { Pagination } from 'src/app/_models/pagination';
 })
 export class MemberListComponent implements OnInit {
   users: User[];
-  user: User = JSON.parse(localStorage.getItem("user"));
+  user: User = JSON.parse(localStorage.getItem('user'));
   userParams: any = {};
   genderList: [
-    { value: "male", display: "Males" },
-    { value: "female", display: "Females" }
+    { value: 'male', display: 'Males' },
+    { value: 'female', display: 'Females' }
   ];
   pagination: Pagination;
 
@@ -35,9 +35,10 @@ export class MemberListComponent implements OnInit {
       this.pagination = data['users'].pagination;
     });
 
-    this.userParams.gender = (this.user.gender == 'female') ? 'male' : 'female';
+    this.userParams.gender = this.user.gender === 'female' ? 'male' : 'female';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
+    this.userParams.orderBy = 'lastActive';  //default ordering from Api
 
   }
   // When bottom page pagination links are clicked
@@ -48,7 +49,7 @@ export class MemberListComponent implements OnInit {
   }
 
   resetFilters() {
-    this.userParams.gender = (this.user.gender == 'female') ? 'male' : 'female';
+    this.userParams.gender = (this.user.gender === 'female') ? 'male' : 'female';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
     this.loadUsers();

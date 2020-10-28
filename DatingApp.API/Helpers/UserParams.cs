@@ -1,7 +1,7 @@
 namespace DatingApp.API.Helpers
 {
     /// <summary>
-    /// Paging defaults (PageNumber=1, PageSize=10) as getters
+    /// Paging defaults (PageNumber=1, PageSize=10, MinAge=18, MaxAge =99) as getters
     /// With optional setters to change these values
     /// </summary>
     public class UserParams
@@ -9,6 +9,7 @@ namespace DatingApp.API.Helpers
         public int MinAge { get; set; } = 18;
         public int MaxAge { get; set; } = 99;
         public string Gender { get; set; }
+        public string OrderBy { get; set; }
         public int UserId { get; set; }               //Filter out current user
         public int PageNumber { get; set; } = 1;    //Which page is Client on
         private int pageSize = 10;                  //max items per page

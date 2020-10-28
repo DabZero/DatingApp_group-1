@@ -45,6 +45,7 @@ namespace DatingApp.API.Controllers
             {
                 userParams.Gender = (userFromRepo.Gender == "male") ? "female" : "male";
             }
+            
 
             PagedList<Models.User> users = await _repo.GetUsers(userParams);
 

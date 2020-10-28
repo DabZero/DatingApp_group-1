@@ -70,7 +70,8 @@ namespace DatingApp.API.Data
         {
             // Get users from the context using EF Core but, do not execute, just hold
             //
-            var users = _context.Users.Include(u => u.Photos).AsQueryable();
+            var users = _context.Users.Include(u => u.Photos).OrderByDescending(u => u.LastActive)
+            .AsQueryable();
 
             users = users.Where(u => u.Id != userParams.UserId);
 
@@ -79,10 +80,21 @@ namespace DatingApp.API.Data
             if (userParams.MinAge != 18 || userParams.MinAge != 99)
             {
                 //2020- 1921 =99    2020-2002 =18
-                var minDOB = DateTime.Today.AddYears(-userParams.MaxAge-1);
+                var minDOB = DateTime.Today.AddYears(-userParams.MaxAge - 1);
                 var maxDOB = DateTime.Today.AddYears(-userParams.MinAge);
 
                 users = users.Where(u => u.DateOfBirth >= minDOB && u.DateOfBirth <= maxDOB);
+            }
+
+            if (!string.IsNullOrEmpty(userParams.OrderBy))
+            {
+                switch (userParams.OrderBy)
+                {
+                    case "created": users = users.OrderByDescending(u => u.Created); break;
+                    case "age": users = users.OrderByDescending(u => u.DateOfBirth); break;
+                    default:
+                        users = users.OrderByDescending(u => u.LastActive); break;
+                }
             }
 
             // Pass all users from DB as a param to the PagedList<T> object 

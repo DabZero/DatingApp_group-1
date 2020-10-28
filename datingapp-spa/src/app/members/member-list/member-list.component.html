@@ -19,10 +19,10 @@
 
         <div class="form-group px-2">
             <label for="gender">Show: </label>
-            <select class="form-control ml-1" style="width: 130px" id="gender" name="gender"
-                [(ngModel)]="userParams.gender">
-                <option *ngFor="let g of genderList" [value]="g.value">
-                    {{g.display}}
+            <select class="form-control ml-1" style="width: 130px" id="gender" [(ngModel)]="userParams.gender"
+                name="gender">
+                <option *ngFor="let gender of genderList" [value]="gender.value">
+                    {{gender.display}}
                 </option>
             </select>
         </div>
@@ -30,6 +30,19 @@
         <button type="button" class="btn btn-info" style="margin-left:10px" (click)="resetFilters()">Reset
             Filter</button>
 
+        <!-- filtering toggles buttons for odering of displayed User Profiles-->
+        <div class="col">
+            <div class="btn-group float-right ordering">
+                <button type="button" name="orderBy" class="btn btn-primary" btnRadio="lastActive"
+                    [(ngModel)]="userParams.orderBy" (click)="loadUsers()">Last Active</button>
+
+                <button type="button" name="orderBy" class="btn btn-primary" btnRadio="created"
+                    [(ngModel)]="userParams.orderBy" (click)="loadUsers()">Newest</button>
+
+                <button type="button" name="orderBy" class="btn btn-primary" btnRadio="age"
+                    [(ngModel)]="userParams.orderBy" (click)="loadUsers()">Age</button>
+            </div>
+        </div>
     </form>
     <br>
     <!-- All Users passed to member-card and cards populated and displayed here -->
